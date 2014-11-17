@@ -1,0 +1,120 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/patientLayout"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    tools:context="com.group0931.triagephase2.PatientActivity" >
+
+    <TextView
+        android:id="@+id/healthnumberLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingLeft="10dp"
+        android:text="@string/health_number"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+    
+    <TextView
+        android:id="@+id/nameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/healthnumberLabel"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="10dp"
+        android:text="@string/name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/dobLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nameLabel"
+        android:layout_marginTop="20dp"
+        android:paddingLeft="10dp"
+        android:text="Date of Birth"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/hcnField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@+id/healthnumberLabel"
+        android:hint="@string/health_number"
+        android:paddingRight="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/nameField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/hcnField"
+        android:layout_below="@+id/hcnField"
+        android:layout_marginTop="20dp"
+        android:hint="@string/name"
+        android:paddingRight="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/dobField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/nameField"
+        android:layout_below="@id/nameField"
+        android:layout_marginTop="20dp"
+        android:hint="Date of Birth"
+        android:paddingRight="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:id="@+id/visitListHeader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/dobLabel">
+
+        <TextView
+            android:id="@+id/visitlistLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp"
+            android:paddingBottom="4dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="50dp"
+            android:paddingTop="4dp"
+            android:text="@string/visits_by_date"
+            android:textAlignment="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/addSeenTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:minHeight="20dp"
+            android:minWidth="50dp"
+            android:onClick="goToCreateVisit"
+            android:text="@string/add_visit"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/visitsListView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/visitListHeader"
+        android:layout_margin="2dp"
+        android:dividerHeight="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="4dp"
+        android:paddingTop="8dp" >
+
+    </ListView>
+
+</RelativeLayout>

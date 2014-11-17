@@ -1,0 +1,14 @@
+package com.group0931.triagephase2;
+
+/**
+ * NoSuchEntryException is thrown 
+ * @author Christina Chung, Angel You, Asher Minden Webb.
+ *
+ */
+public class NoSuchEntryException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+}

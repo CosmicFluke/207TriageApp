@@ -1,0 +1,254 @@
+package com.group0931.triagephase2;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+/**
+ * A date, storing the year, month, day and time, in which time is optional. 
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public class TimeStamp implements Comparable<TimeStamp>, Serializable{
+
+	
+	/** The date of this {@code TimeStamp}. */
+	private GregorianCalendar date;
+	/** Whether this {@code TimeStamp} has a time. */
+	private boolean containsTime;
+	/** The format of a {@code TimeStamp} without time. */
+	private SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd");
+	/** The format of a {@code TimeStamp} with time. */
+	private SimpleDateFormat formatDateWithTime = 
+			new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	
+	/**
+	 * Constructs a {@code TimeStamp} with the current date and time. 
+	 */
+	public TimeStamp(){
+		this.date = new GregorianCalendar();
+		this.containsTime = true;
+	}
+	
+	/**
+	 * Constructs a {@code TimeStamp} with a specified date.
+	 * @param year The year of this {@code TimeStamp}.
+	 * @param month The month of this {@code TimeStamp}.
+	 * @param day The day of this {@code TimeStamp}.
+	 */
+	public TimeStamp (int year, int month, int day){
+			this.date = new GregorianCalendar(year, month - 1, day);
+			this.containsTime = false;
+	}
+	
+	/**
+	 * Constructs a {@code TimeStamp} with a given date and time. 
+	 * @param year The year of this {@code TimeStamp}.
+	 * @param month The month of this {@code TimeStamp}.
+	 * @param day The day of this {@code TimeStamp}.
+	 * @param hour The hour of this {@code TimeStamp}.
+	 * @param minute The minute of this {@code TimeStamp}.
+	 */
+	public TimeStamp(int year, int month, int day, int hour, 
+			int minute) {
+			this.date = new GregorianCalendar(year, month, day, hour, minute);
+			this.containsTime = true;
+	}
+	
+	/**
+	 * Returns a {@code TimeStamp} object with time iff the parameters are valid.
+	 * @param year The year of this {@code TimeStamp}.
+	 * @param month The month of this {@code TimeStamp}.
+	 * @param day The day of this {@code TimeStamp}.
+	 * @param hour The hour of this {@code TimeStamp}.
+	 * @param minute The minute of this {@code TimeStamp}.
+	 * @return The {@code TimeStamp} object.
+	 * @throws InvalidTimeStampException If the given parameters are invlid.
+	 */
+	public static TimeStamp FactoryTimeStampWithTime (String year, String month, 
+		String day, String hour, String minute) 
+		throws InvalidTimeStampException {
+		
+		if (TimeStamp.isValidTimeStamp(year, month, day, hour, minute)) {
+			return new TimeStamp(Integer.parseInt(year), Integer.parseInt(month), 
+					Integer.parseInt(day),
+					Integer.parseInt(hour), Integer.parseInt(minute));
+		} else {
+			throw new InvalidTimeStampException(); 
+		}
+	}
+	
+	/**
+	 * Returns a {@code TimeStamp} object without time iff the parameters are valid.
+	 * @param year The year of this {@code TimeStamp}.
+	 * @param month The month of this {@code TimeStamp}.
+	 * @param day The day of this {@code TimeStamp}.
+	 * @param hour The hour of this {@code TimeStamp}.
+	 * @param minute The minute of this {@code TimeStamp}.
+	 * @return The {@code TimeStamp} object.
+	 * @throws InvalidTimeStampException If the given parameters are invlid.
+	 */
+	public static TimeStamp FactoryTimeStampWithoutTime (String year, String month, String day) 
+			throws InvalidTimeStampException {
+		if (TimeStamp.isValidTimeStamp(year, month, day)) {
+			return new TimeStamp(Integer.parseInt(year), Integer.parseInt(month), 
+					Integer.parseInt(day));
+		} else {
+			throw new InvalidTimeStampException(); 
+		}
+	}
+
+	/**
+	 * Returns whether the given date is a valid {@code TimeStamp}.  
+	 * @param year The year of this date.
+	 * @param month The month of this date.
+	 * @param day The day of this date.
+	 * @param hour The hour of this date.
+	 * @param minute The minute of this date.
+	 * @return true iff the given date is a valid {@code TimeStamp}, false otherwise.
+	 */
+	public static boolean isValidTimeStamp(String year, String month,
+			String day, String hour, String minute){
+		if (!(year.equals("")  || month.equals("") || day.equals("") 
+				|| day.equals("") || hour.equals("") || minute.equals(""))){	
+			int yr = Integer.parseInt(year);
+			int mth = Integer.parseInt(month);
+			int dy = Integer.parseInt(day);
+			int hr = Integer.parseInt(hour);
+			int min = Integer.parseInt(minute);
+			boolean hourInValidRange = 0<=hr && hr<=23;
+			boolean minuteInValidRange = 0<=min && min<=60;
+			return isValidDayMonthAndYear(yr, mth, dy) && hourInValidRange &&
+					minuteInValidRange;
+		}
+		return false;
+	}
+		
+	/**
+	 * Returns whether the given date is a valid {@code TimeStamp}.  
+	 * @param year The year of this date.
+	 * @param month The month of this date.
+	 * @param day The day of this date.
+	 * @return true iff the given date is a valid {@code TimeStamp}, false otherwise.
+	 */
+	public static boolean isValidTimeStamp(String year, String month,
+			String day) {
+		if (!(year.equals("")  || month.equals("") || day.equals(""))){
+			int yr = Integer.parseInt(year);
+			int mth = Integer.parseInt(month);
+			int dy = Integer.parseInt(day);
+			System.out.println(isValidDayMonthAndYear(yr,mth,dy));
+			return isValidDayMonthAndYear(yr, mth, dy);
+		} else {
+			return false; 
+		}
+	}
+	
+	/**
+	 * Returns whether the given year, month and day are valid.
+	 * @param year The year of this date.
+	 * @param month The month of this date.
+	 * @param day The day of this date.
+	 * @return True iff the given year, month and day are valid, false otherwise.
+	 */
+	public static boolean isValidDayMonthAndYear(int year, int month, int day){
+		boolean yearInValidRange = year <= Calendar.getInstance().get(Calendar.YEAR);
+		boolean monthInValidRange = 1<=month && month<=12;
+		boolean dayInValidRange = false; 
+		//Check whether day is in valid range.
+		switch (month) {
+            case 1: dayInValidRange = 1<=day && day<=31;
+            case 2: 
+            	if ((new GregorianCalendar()).isLeapYear(year)){
+            		dayInValidRange = 1<day && day<=29;
+            	} else {
+            		dayInValidRange = 1<=day && day<=28;
+            	}
+            case 3: dayInValidRange = 1<=day && day<=31;
+            case 4: dayInValidRange = 1<=day && day<=30;
+            case 5:	dayInValidRange = 1<=day && day<=31;
+            case 6: dayInValidRange = 1<=day && day<=30;
+            case 7:	dayInValidRange = 1<=day && day<=31;
+            case 8:	dayInValidRange = 1<=day && day<=31;
+            case 9: dayInValidRange = 1<=day && day<=30;
+            case 10: dayInValidRange = 1<=day && day<=31;
+            case 11: dayInValidRange = 1<=day && day<=30;
+            case 12: dayInValidRange = 1<=day && day<=31; 
+		}
+		return yearInValidRange &&
+        		monthInValidRange && 
+        		dayInValidRange;
+	}
+	
+	/**
+	 * Returns the date of this {@code TimeStamp}.
+	 * @return the date of this {@code TimeStamp}.
+	 */
+	public GregorianCalendar getDate() {
+		return date;
+	}
+	
+	/**
+	 * Returns the year of this {@code TimeStamp}.
+	 * @return The year of this {@code TimeStamp}.
+	 */
+	public int getYear() {
+		return this.date.get(Calendar.YEAR);
+	}
+	
+	/**
+	 * Returns the month of this {@code TimeStamp}.
+	 * @return The month of this {@code TimeStamp}. 
+	 */
+	public int getMonth() {
+		return this.date.get(Calendar.MONTH);
+	}
+	
+	/**
+	 * Returns the day of this {@code TimeStamp}.
+	 * @return The day of this {@code TimeStamp}.
+	 */
+	public int getDay() {
+		return this.date.get(Calendar.DATE);
+	}
+	
+	/**
+	 * Returns the hour of this {@code TimeStamp}. 
+	 * @return The hour of this {@code TimeStamp}. 
+	 */
+	public int getHour() {
+		return this.date.get(Calendar.HOUR);
+	}
+	
+	/**
+	 * Returns the minute of this {@code TimeStamp}.
+	 * @return The minute of this {@code TimeStamp}. 
+	 */
+	public int getMinute() {
+		return this.date.get(Calendar.MINUTE);
+	}
+	
+	/**
+	 * Returns whether this {@code TimeStamp} contains a time.
+	 * @return True iff this {@code TimeStamp} contains a time, false otherwise.
+	 */
+	public boolean isContainsTime() {
+		return containsTime;
+	}
+
+	@Override
+	public String toString(){
+		if (containsTime){
+			return formatDateWithTime.format(this.date.getTime());
+		} else {
+			return formatDate.format(this.date.getTime());
+		}
+	}
+	
+	@Override
+	public int compareTo(TimeStamp another) {
+		return this.date.compareTo(((TimeStamp) another).date);
+	}
+	
+}

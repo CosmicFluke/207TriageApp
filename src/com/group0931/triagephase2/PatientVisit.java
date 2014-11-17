@@ -1,0 +1,211 @@
+package com.group0931.triagephase2;
+
+import java.io.Serializable;
+import java.util.TreeSet;
+
+/**
+ * A record of a {@code Patient}'s {@code PatientVisit} to the ER.
+ * @author Christina Chung, Asher Minden-Webb, Angel You.
+ *
+ */
+public class PatientVisit implements Serializable, Comparable<PatientVisit> {
+	
+	/** The time of arrival of this {@code PatientVisit}. */
+	private TimeStamp arrivalTime;
+	/** The time seen by a doctor of this {@code PatientVisit}. */
+	private TimeStamp seenTime;
+	/** Whether the patient has seen a doctor in this {@code PatientVisit}. */
+	private boolean seenByDoctor;
+	
+	/** The urgency point for temperature. */
+	private int temperatureUrgency;
+	/** The urgency point for heart rate. */
+	private int heartRateUrgency;
+	/** The urgency point for blood pressure. */
+	private int bloodPressureUrgency;
+	
+	/** 
+	 * The current urgency point of this {@code PatientVisit} based on 
+	 * the urgency point of each vital sign. */
+	private int urgencyPoints;
+	
+	/** A set of {@code TemperatureReading}s, organized chronologically. */
+	private TreeSet<TemperatureReading> temperatureRecord = new TreeSet<TemperatureReading>();
+	/** A set of {@code HeartRateReadings}, organized chronologically. */
+	private TreeSet<HeartRateReading> heartRateRecord = new TreeSet<HeartRateReading>();
+	/** A set of {@code BloodPressureReadings}, organized chronologically. */
+	private TreeSet<BloodPressureReading> bloodPressureRecord = new TreeSet<BloodPressureReading>();
+
+	/**
+	 * Constructs a {@code PatientVisit} with this {@code PatientVisit}'s arrival 
+	 * time from arrivalTime.
+	 * @param arrivalTime The arrival time to the ER of this {@code PatientVisit}.
+	 */
+	public PatientVisit(TimeStamp arrivalTime) {
+		this.arrivalTime = arrivalTime;
+		this.seenByDoctor = false;
+	}
+	
+	/**
+	 * Returns the arrival time of this {@code PatientVisit}.
+	 * @return The arrival time.
+	 */
+	public TimeStamp getArrivalTime(){
+		return this.arrivalTime;
+	}
+	
+	/**
+	 * Sets the time seen by a doctor of this {@code PatientVisit}.
+	 * @param date The time seen by a doctor.
+	 */
+	public void setSeenTime(TimeStamp date) throws InactiveVisitException{
+		if(!this.seenByDoctor){
+			this.seenTime = date;
+			this.seenByDoctor = true;
+		} else {
+			throw new InactiveVisitException();
+		}
+	}
+	
+	/**
+	 * Returns the time seen by a doctor of this {@code PatientVisit}.
+	 * @return The time seen by a doctor.
+	 */
+	public TimeStamp getSeenTime(){
+		if (this.seenByDoctor)
+			return this.seenTime;
+		else
+			return null;
+	}
+	
+	/**
+	 * Returns whether the patient has already seen the doctor in this {@code PatientVisit}.
+	 * @return True iff the patient has seen the doctor. False otherwise.
+	 */
+	public boolean seenByDoctor(){
+		return this.seenByDoctor;
+	}
+	
+	/**
+	 * Adds a new temperature reading to the record of temperature readings.
+	 * @param temperatureReading The new temperature reading.
+	 */
+	public void addTemperatureReading(TemperatureReading temperatureReading){
+		this.temperatureRecord.add(temperatureReading);
+		this.temperatureUrgency = this.temperatureRecord.first().getUrgency();
+	}
+	
+	/**
+	 * Adds a new heart rate reading to the record of heart rate readings.
+	 * @param heartRateReading The new heart rate reading.
+	 */
+	public void addHeartRateReading(HeartRateReading heartRateReading){
+		this.heartRateRecord.add(heartRateReading);
+		this.heartRateUrgency = this.heartRateRecord.first().getUrgency();
+	}
+	/**
+	 * Adds a new blood pressure reading to the record of blood pressure readings.
+	 * @param bloodPressureReading The new blood pressure reading.
+	 */
+	public void addBloodPressureReading(BloodPressureReading bloodPressureReading){
+		this.bloodPressureRecord.add(bloodPressureReading);
+		this.bloodPressureUrgency = this.bloodPressureRecord.first().getUrgency();
+	}
+	
+	/**
+	 * Returns the record of temperature readings during this {@code PatientVisit}.
+	 * @return The temperature record of this {@code PatientVisit}.
+	 */
+	public TreeSet<TemperatureReading> getTemperatureRecord(){
+		return this.temperatureRecord;
+	}
+	
+	/**
+	 * Returns the record of heart rate readings during this {@code PatientVisit}.
+	 * @return The heart rate record of this {@code PatientVisit}.
+	 */
+	public TreeSet<HeartRateReading> getHeartRateRecord(){
+		return this.heartRateRecord;
+	}
+	
+	/**
+	 * Returns the record of blood pressure readings during this {@code PatientVisit}.
+	 * @return The blood pressure record of this {@code PatientVisit}.
+	 */
+	public TreeSet<BloodPressureReading> getBloodPressureRecord(){
+		return this.bloodPressureRecord;
+	}
+	
+	/**
+	 * Returns the most recent temperature reading in the temperature record of this {@code PatientVisit}.
+	 * @return The most recent temperature reading.
+	 */
+	public TemperatureReading getMostRecentTemperatureReading(){
+		return this.temperatureRecord.first();
+	}
+	
+	/**
+	 * Returns the most recent heart rate reading in the heart rate record of this {@code PatientVisit}.
+	 * @return The most recent heart rate reading.
+	 */
+	public HeartRateReading getMostRecentHeartRateReading(){
+		return this.heartRateRecord.first();
+	}
+	
+	/**
+	 * Returns the most recent blood pressure reading in the blood pressure record of this {@code PatientVisit}.
+	 * @return The most recent blood pressure reading.
+	 */
+	public BloodPressureReading getMostRecentBloodPressureReading(){
+		return this.bloodPressureRecord.first();
+	}
+	
+	/**
+	 * Returns the sum of the urgency points of the most recent readings of temperature, heart rate
+	 * and blood pressure based on hospital policy.
+	 * @return The sum of the urgency points of temperature, heart rate and blood pressure readings.
+	 */
+	public int getUrgencyPoint(){
+		this.urgencyPoints = this.temperatureUrgency + this.heartRateUrgency + this.bloodPressureUrgency;
+		return this.urgencyPoints;
+	}
+	
+	@Override
+	public int compareTo(PatientVisit another){
+		TimeStamp otherTime = another.getArrivalTime();
+		return this.arrivalTime.compareTo(otherTime);
+	}
+	
+	/**
+	 * Returns the String representation of this HeartRateReading in the format: <br>
+	 * Arrival Time: yyyy-MM-dd HH:mm <br>
+	 * yyyy-MM-dd HH:mm  Temperature: degrees Celcius <br>
+	 * yyyy-MM-dd HH:mm  Heart Rate: bpm <br>
+	 * yyyy-MM-dd HH:mm  Blood Pressure: systolic/diastolic <br>
+	 * Seen by a doctor on: yyyy-MM-dd HH:mm / Not yet seen by doctor. <br>
+	 */
+	@Override
+	public String toString() {
+		// Arrival Time: 2014-11-06 12:04
+		// 2014-11-06 12:54  Temperature: 40
+		// 2014-11-06 12:23  Heart Rate: 100
+		// 2014-11-06 14:10  Blood Pressure: 150/90
+		// Seen by doctor on: 2014-11-06 15:00  OR  Not yet seen by doctor.
+		String temperature = "";
+		String heartRate = "";
+		String bloodPressure = "";
+		String time = getArrivalTime().toString() + "\n";
+		String seenByDoc = "Not yet seen by doctor." + "\n";
+				
+		if (! this.temperatureRecord.isEmpty())
+			temperature = getMostRecentTemperatureReading().toString() + "\n";
+		if (! this.heartRateRecord.isEmpty())
+			heartRate = getMostRecentHeartRateReading().toString() + "\n";
+		if (! this.bloodPressureRecord.isEmpty())
+			bloodPressure = getMostRecentBloodPressureReading().toString() + "\n";
+		if (this.seenByDoctor)
+			seenByDoc = "Seen by doctor on: " + getSeenTime().toString() + "\n";
+			
+		return "Arrival Time: " + time + temperature + heartRate + 	bloodPressure + seenByDoc;
+		}
+}

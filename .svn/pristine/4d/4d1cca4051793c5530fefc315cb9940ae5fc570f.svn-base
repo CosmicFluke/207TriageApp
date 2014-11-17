@@ -1,0 +1,140 @@
+package com.group0931.triagephase2;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+
+/**
+ * An activity for creating a new visit entry to the current patient.
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public class CreateVisitActivity extends Activity {
+	
+	/** The year of arrival.*/
+	EditText year;
+	/** The month of arrival.*/
+	EditText month;
+	/** The day of arrival.*/
+	EditText day;
+	/** The hour of arrival.*/
+	EditText hour;
+	/** The minute of arrival.*/
+	EditText minute;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_create_visit);
+		
+		year = (EditText) findViewById(R.id.year);
+		month = (EditText) findViewById(R.id.month);
+		day = (EditText) findViewById(R.id.day);
+		hour = (EditText) findViewById(R.id.hour);
+		minute = (EditText) findViewById(R.id.minute);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.create_visit, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * Creates a new visit entry for the current patient. 
+	 * @param thisView The View from which the method is called. 
+	 * @throws CurrentPatientNotSetException When there isn't a current patient 
+	 * to add a visit entry to. 
+	 * (i.e. CurrentPatient's patient attribute is null). 
+	 * @throws VisitsNotLoadedException When the current patient doesn't have a 
+	 * most recent visit. 
+	 * @throws MultipleVisitException If the current patient have not yet seen 
+	 * the doctor in this visit to the ER.
+	 */
+	public void createNewVisit(View thisView) throws CurrentPatientNotSetException, 
+	VisitsNotLoadedException{
+		
+		TimeStamp arrivalTime; 		
+		String arrivalYear = year.getText().toString();
+		String arrivalMonth = month.getText().toString();
+		String arrivalDay = day.getText().toString();
+		String arrivalHour = hour.getText().toString();
+		String arrivalMinute = minute.getText().toString();	
+	
+		//Create the visit.
+		try {		
+			/* Set arrivalTime with the current date and time, if the user 
+			 * left the fields blank. */
+			if (arrivalYear.equals("") && arrivalMonth.equals("") 
+					&& arrivalDay.equals("") &&	arrivalHour.equals("") 
+					&& arrivalMinute.equals("")){
+				arrivalTime = new TimeStamp(); 	
+			}else { //Set arrivalTime with the given arrival date and time.
+				try {
+				arrivalTime = TimeStamp.FactoryTimeStampWithTime(arrivalYear, arrivalMonth, arrivalDay, 
+						arrivalHour, arrivalMinute);
+				
+				// Returns user to CreateVisitActivity
+				} catch(InvalidTimeStampException e){
+					this.displayMessage("The date entered was not valid.");
+					return;
+				}
+			}
+			
+			PatientVisit newVisit = new PatientVisit(arrivalTime);
+			CurrentPatient.get().addVisit(newVisit);		
+			setResult(RESULT_OK);
+			
+		// ** Handle exceptions **
+			
+		// Cancels activity
+		} catch(MultipleVisitException e){
+			this.displayMessage("Cannot create a new visit entry. " 
+					+ CurrentPatient.get().getName()  +
+					" already has an active visit.");
+			setResult(RESULT_CANCELED);
+			e.printStackTrace();
+		// Cancels activity
+		} catch (VisitsNotLoadedException e) {
+			this.displayMessage("An error occurred: the visit was not added.");
+			e.printStackTrace();
+		} catch (CurrentPatientNotSetException e){
+			this.displayMessage("An error occurred: the visit was not added.");
+			e.printStackTrace();
+		} finally {
+			this.finish();
+		}
+		
+		setResult(RESULT_CANCELED);
+		this.finish();
+	}
+	
+	/**
+	 * Displays a message to the user by launching
+	 * a {@code MessageDisplayActivity}.
+	 * @param message The message to be displayed.
+	 */
+	public void displayMessage(String message){
+		Intent i = new Intent(this, MessageDisplayActivity.class);
+		i.putExtra("DISPLAYMESSAGE", message);
+		this.startActivity(i);
+	}
+
+}

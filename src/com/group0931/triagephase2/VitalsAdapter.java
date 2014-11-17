@@ -1,0 +1,53 @@
+package com.group0931.triagephase2;
+
+import java.util.ArrayList;
+
+
+
+import android.content.Context;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+/**
+ * 
+ * @author Christina Chung, Asher Minden-Webb, Angel You.
+ *
+ */
+public class VitalsAdapter extends ArrayAdapter<VitalSignReading> {
+
+	public VitalsAdapter(Context context, ArrayList<VitalSignReading> visits) {
+		super(context, 0, visits);
+	}
+
+	@Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Check if an existing view is being reused, otherwise inflate the view
+        if (convertView == null) {
+           convertView = 
+        		   LayoutInflater.from(getContext()).inflate(
+        				   R.layout.vitals_list_entry, parent, false);
+        }
+        // Get the data item for this position
+        VitalSignReading vitalSign = getItem(position);   
+	
+        Log.d("getting list View item", "This item is " + vitalSign.toString());
+        TextView vitalTimeView = 
+        		(TextView) convertView.findViewById(R.id.vitalTimeStamp);
+        TextView vitalReadingView =
+        		(TextView) convertView.findViewById(R.id.vitalEntry);
+        
+        // Populate the data into the template view using the data object
+        String vitalTime = vitalSign.getReadingTime().toString();
+        String vitalReading = vitalSign.getReadingAsString();
+
+        vitalTimeView.setText(vitalTime);
+        vitalReadingView.setText(vitalReading);
+	
+        // Return the completed view to render on screen
+        return convertView;
+    }
+}

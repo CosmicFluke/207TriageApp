@@ -1,0 +1,55 @@
+package com.group0931.triagephase2;
+
+import java.util.ArrayList;
+
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+/**
+ * 
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public class VisitAdapter extends ArrayAdapter<TimeStamp> {
+
+	public VisitAdapter(Context context, ArrayList<TimeStamp> visits) {
+		super(context, 0, visits);
+	}
+
+	@Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        // Check if an existing view is being reused, otherwise inflate the view
+        if (convertView == null) {
+           convertView = 
+        		   LayoutInflater.from(getContext()).inflate(
+        				   R.layout.visits_list_entry, parent, false);
+        }
+        // Get the data item for this position
+        TimeStamp visitTime = getItem(position);   
+        PatientVisit visit = null;
+		try {
+			// Get the time-matched {@code PatientVisit} object from the current patient
+			visit = CurrentPatient.get().getVisitByDate(visitTime);
+	        // Lookup view for data population
+	        TextView visitArrivalTime = 
+	        		(TextView) convertView.findViewById(R.id.visitsListEntry);
+	        // Populate the data into the template view using the data object
+	        String visitText = visit.getArrivalTime().toString();
+	        if (position == 0){
+	        	visitText = visitText + " (Current visit)";
+	        }
+	        visitArrivalTime.setText(visitText);
+		} catch (NoSuchEntryException e) {
+			e.printStackTrace();
+		} catch (CurrentPatientNotSetException e) {
+			e.printStackTrace();
+		}
+        // Return the completed view to render on screen
+        return convertView;
+    }
+}

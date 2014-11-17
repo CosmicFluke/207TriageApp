@@ -1,0 +1,114 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/date_of_reading" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_day"
+            android:layout_weight="1"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="@string/day" />
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_month"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="@string/month" />
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_year"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="@string/year" />
+        
+    </LinearLayout>
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/time_of_reading" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_hour"
+            android:layout_weight="1"
+       		android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="@string/hour" />
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_minute"
+            android:layout_weight="1"
+        	android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="@string/minute" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/blood_pressure_reading" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_systolic"
+            android:layout_weight="1"
+       		android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="Systolic" />
+        
+        <EditText
+            android:id="@+id/blood_pressure_reading_diastolic"
+            android:layout_weight="1"
+       		android:layout_width="0dp"
+        	android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="date"
+            android:hint="Diastolic" />
+
+    </LinearLayout>
+    
+    <Button
+        android:id="@+id/add_blood_pressure_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="addNewBloodPressure"
+        android:text="@string/add" />
+    
+</LinearLayout>

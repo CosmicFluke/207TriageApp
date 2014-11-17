@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="end|start"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.group0931.triagephase2.MainActivity" >
+
+    <Button
+        android:id="@+id/saveDataButton"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="saveDatabase"
+        android:text="@string/save_database" />
+
+    <TextView
+        android:id="@+id/createVisitHintView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/patients"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="53dp" >
+
+        <AutoCompleteTextView
+            android:id="@+id/findPatientAutoComp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:ems="10"
+            android:hint="@string/hcn_search_hint"
+            android:inputType="number"
+            android:textSize="16sp" >
+            
+            <requestFocus />
+            
+        </AutoCompleteTextView>
+
+        <Button
+            android:id="@+id/getPatientButton"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/findPatientAutoComp"
+            android:layout_toEndOf="@+id/findPatientAutoComp"
+            android:onClick="findPatient"
+            android:text="@string/get_record"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/patientList"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent" >
+    </ListView>
+
+</LinearLayout>

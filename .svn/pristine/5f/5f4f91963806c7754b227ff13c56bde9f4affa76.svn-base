@@ -1,0 +1,123 @@
+package com.group0931.triagephase2;
+
+/**
+ * A blood pressure reading of a PaitentVisit.
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public class BloodPressureReading extends VitalSignReading 
+implements Comparable<BloodPressureReading>{
+
+	/** The systolic pressure of this BloodPressureReading. */
+	private int systolic;
+	/** The diastolic pressure of this BloodPressureReading. */
+	private int diastolic;
+	/** The date and time of this BloodPressureReading. */
+	private TimeStamp readingTime;
+	/** 
+	 * **NOT IMPLEMENTED IN PHASE 2**<br>
+	 * The urgency point of this BloodPressureReading. */
+	private int urgency;
+	
+	/**
+	 * Constructs a BloodPressureReading with systolic pressure from systolic, 
+	 * diastolic pressure from diastolic, and date and time from date.
+	 * @param systolic The systolic pressure of this BloodPressureReading.
+	 * @param diastolic The diastolic pressure of this BloodPressureReading.
+	 * @param date The date and time of this TemperatureReading.
+	 * @throws InvalidVitalSignException 
+	 */
+	public BloodPressureReading(int systolic, int diastolic, TimeStamp date){
+			this.systolic = systolic;
+			this.diastolic = diastolic;
+			this.readingTime = date;
+			this.urgency = this.calculateUrgencyPoint();
+	}
+	
+	/**
+	 * Make BP object from strings passed in. (To rephrase). 
+	 * @throws InvalidVitalSignException 
+	 */
+	public static BloodPressureReading FactoryBloodPressureReading (String systolic,
+			String diastolic, TimeStamp date) throws InvalidVitalSignException{
+		if (BloodPressureReading.isValid(systolic, diastolic))
+			return new BloodPressureReading(Integer.parseInt(systolic), 
+					Integer.parseInt(diastolic), date);
+			
+		else 
+			throw new InvalidVitalSignException();		
+	}
+	
+	/**
+	 * TO COMMENT
+	 * @param a
+	 * @param b
+	 * @return
+	 */
+	public static boolean isValid(String a, String b){
+		try{
+			Integer.parseInt(a);
+			Integer.parseInt(b);
+		}catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * TO COMMENT
+	 * @return
+	 */
+	public int calculateUrgencyPoint(){
+		if (this.systolic >= 140 || this.diastolic >= 90)
+			return 1;
+		else 
+			return 0;
+	}
+	
+	/**
+	 * Returns the systolic pressure of this BloodPressureReading.
+	 * @return The systolic pressure of this BloodPressureReading.
+	 */
+	public int getSystolic(){
+		return this.systolic;
+	}
+	
+	/**
+	 * Returns the diastolic pressure of this BloodPressureReading.
+	 * @return The diastolic pressure of this BloodPressureReading.
+	 */
+	public int getDiastolic(){
+		return this.diastolic;
+	}
+	
+	@Override
+	public TimeStamp getReadingTime(){
+		return this.readingTime;
+	}
+	
+	@Override
+	public int getUrgency() {
+		return this.urgency;
+	}
+
+	@Override
+	public int compareTo(BloodPressureReading another) {
+		TimeStamp otherTime = another.getReadingTime();
+		return this.readingTime.compareTo(otherTime);
+	}
+
+	/**
+	 * Returns the String representation of this blood pressure reading in the
+	 * format of "yyyy-MM-dd HH:mm  Blood Pressure: systolic/diastolic".
+	 */
+	@Override
+	public String toString() {
+		// in the format "yyyy-MM-dd HH:mm  Blood Pressure: systolic/diastolic"
+		String time = this.getReadingTime().toString();
+		String systolic = String.valueOf(this.getSystolic());
+		String diastolic = String.valueOf(this.getDiastolic());
+		return time + "  Blood Pressure: " + systolic + "/" + diastolic;
+	}
+	
+}

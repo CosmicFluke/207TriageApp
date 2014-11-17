@@ -1,0 +1,190 @@
+package com.group0931.triagephase2;
+
+import java.util.ArrayList;
+import java.io.IOException;
+import com.group0931.triagephase2.R;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+/**
+ * The main activity of the Triage application.
+ * @author Asher Minden-Webb, Angel You, Christina Chung
+ *
+ */
+public class MainActivity extends Activity {
+	
+	/**The {@code Manager} object, which contains all patient data.*/
+	private Manager manager;
+	/**The {@code Context} of this application.*/
+	private Context appContext;
+	
+	// Primary interaction views for patient information & selection.
+	AutoCompleteTextView healthNumBox;
+	ListView patientListView;
+	
+	// Data containers for patient information.
+	ArrayList<HealthNumber> healthNumList;
+	ArrayList<String> patientInfo;
+	
+	// Adapters for dynamic patient list.
+	ArrayAdapter<String> listAdapter;
+	ArrayAdapter<String> autoCompleteAdapter;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		appContext = getApplicationContext();
+		
+		// Get the Manager singleton
+		this.manager = Manager.getManager();
+		
+		// Load the database from serialization
+		try {
+			FileManager.loadDatabaseFromSer(manager, appContext);
+		} catch (InvalidTimeStampException e){
+			e.printStackTrace();
+		} 
+		
+		// Initialize instance variables for important View objects
+	    this.healthNumBox = 
+				(AutoCompleteTextView) findViewById(R.id.findPatientAutoComp);
+		this.patientListView = (ListView) findViewById(R.id.patientList);
+		
+		// Load content into views
+		loadContent();
+		populateListView();
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings)
+			return true;
+		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * Loads content from {@code Manager} into the activity for use in {@code Views}.<br>  
+	 * Sets up ArrayAdapters and loads autocomplete data into the Health Number
+	 * search box.
+	 */
+	public void loadContent (){
+		// Get list of health numbers for Patients List
+		this.healthNumList = 
+				new ArrayList<HealthNumber>(this.manager.getAllPatients());
+		String[] healthNumbers = new String[healthNumList.size()];
+		int i = 0;
+		for (HealthNumber healthNum : healthNumList){
+			healthNumbers[i] = healthNum.getHealthNumber();
+			i++;
+		}
+		
+		// Produce AutoComplete data for health card numbers
+		this.autoCompleteAdapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, healthNumbers);
+        
+        this.healthNumBox.setAdapter(this.autoCompleteAdapter);
+        
+        this.patientInfo = new ArrayList<String>();
+        for (HealthNumber patient : this.healthNumList){
+        	this.patientInfo.add(this.manager.getPatientRecord(patient).
+        			toString());
+        }
+        this.listAdapter = new ArrayAdapter<String>(this, 
+        		R.layout.patient_list_entry, this.patientInfo);
+	}
+	
+	/**
+	 * Populates the {@code ListView} with patient information.
+	 */
+	private void populateListView() {
+		System.out.println("populate");
+		
+        // Assign the ArrayAdapter to the ListView for the Patient List
+        this.patientListView.setAdapter(this.listAdapter);
+        final Intent goPatient = new Intent(this, PatientActivity.class);
+        this.patientListView.setOnItemClickListener(new OnItemClickListener() {
+        	
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view,
+				int position, long id) {
+			String viewText = (String) ((TextView)view).getText();
+			String healthNum = viewText.substring(0, viewText.indexOf("\n"));
+	        try {
+				CurrentPatient.set(new HealthNumber(healthNum), manager);
+		        startActivity(goPatient);
+			} catch (InvalidIDException e) {
+				e.printStackTrace();
+			} catch (RecordNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		});
+	}
+		
+	/**
+	 * Saves all patient information. 
+	 * @param thisView The {@code View} from which the method is called.
+	 */
+	public void saveDatabase (View thisView){
+		FileManager.writeDatabaseToSer(this.manager);
+	}
+	
+	/**
+	 * Displays the record of the 
+	 * requested patient.
+	 * @param thisView the {@code View} from which the method is called.
+	 */
+	public void findPatient (View thisView) {
+		
+		AutoCompleteTextView healthNumBox = (AutoCompleteTextView)
+                findViewById(R.id.findPatientAutoComp);
+		String healthNum = healthNumBox.getText().toString();
+		final Intent goPatient = new Intent(this, PatientActivity.class);
+		try {
+			CurrentPatient.set(new HealthNumber(healthNum), manager);
+			this.startActivity(goPatient);
+		} catch (InvalidIDException e) {
+			this.displayMessage("Unfortunately, " + healthNum + 
+					" is not a valid health card number. " +
+					"Please try again.");
+		} catch (RecordNotFoundException e) {
+			this.displayMessage("Unfortunately, " + healthNum + 
+					" does not exist in our database. Please try again.");
+		}
+	}
+	
+	/**
+	 * Displays a message to the user by launching a
+	 * {@code MessageDisplayActivity}.
+	 * @param message The message to be displayed.
+	 */
+	public void displayMessage(String message) {
+		Intent i = new Intent(this, MessageDisplayActivity.class);
+		i.putExtra("DISPLAYMESSAGE", message);
+		this.startActivity(i);
+	}
+	
+}

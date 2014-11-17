@@ -1,0 +1,32 @@
+package com.group0931.triagephase2;
+
+import java.io.Serializable;
+
+/**
+ * A vital sign reading of a PatientVisit.
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public abstract class VitalSignReading implements Serializable{
+	
+	/**
+	 * Returns the date and time of this vital sign reading.
+	 * @return The date and time of this vital sign reading.
+	 */
+	public abstract TimeStamp getReadingTime();
+	
+	/**
+	 * Calculates and eturns the urgency point of this vital sign reading 
+	 * based on the hospital policy.
+	 * @return The urgency point of this vital sign reading.
+	 */
+	public abstract int calculateUrgencyPoint();
+
+	/**
+	 * Returns the urgency point of this vital sign reading based on the 
+	 * hospital policy.
+	 * @return The urgency point of this vital sign reading.
+	 */
+	public abstract int getUrgency();
+
+}

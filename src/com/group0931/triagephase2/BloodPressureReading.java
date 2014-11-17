@@ -1,0 +1,125 @@
+package com.group0931.triagephase2;
+
+/**
+ * A blood pressure reading of a PaitentVisit.
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public class BloodPressureReading extends VitalSignReading 
+implements Comparable<BloodPressureReading>{
+
+	/** The systolic pressure of this BloodPressureReading. */
+	private int systolic;
+	/** The diastolic pressure of this BloodPressureReading. */
+	private int diastolic;
+	/** The date and time of this BloodPressureReading. */
+	private TimeStamp readingTime;
+	/** 
+	 * **NOT IMPLEMENTED IN PHASE 2**<br>
+	 * The urgency point of this BloodPressureReading. */
+	private int urgency;
+	
+	/**
+	 * Constructs a {@code BloodPressureReading} with systolic pressure from systolic, 
+	 * diastolic pressure from diastolic, and date and time from date.
+	 * @param systolic The systolic pressure of this {@code BloodPressureReading}.
+	 * @param diastolic The diastolic pressure of this {@code BloodPressureReading}.
+	 * @param date The date and time of this {@code BloodPressureReading}.
+	 */
+	public BloodPressureReading(int systolic, int diastolic, TimeStamp date){
+			this.systolic = systolic;
+			this.diastolic = diastolic;
+			this.readingTime = date;
+			this.urgency = this.calculateUrgencyPoint();
+	}
+	
+	/**
+	 * Returns a {@code BloodPressureReading} object iff the given Strings of the 
+	 * blood pressure and date is valid.
+	 * @param bloodPressure The blood pressure of this {@code BloodPressureReading}.
+	 * @param date The date and time of this {@code BloodPressureReading}.
+	 * @return The BloodPressureReading object.
+	 * @throws InvalidVitalSignException If the given parameters are invalid.
+	 */
+	public static BloodPressureReading FactoryBloodPressureReading (String systolic,
+			String diastolic, TimeStamp date) throws InvalidVitalSignException{
+		if (BloodPressureReading.isValid(systolic, diastolic))
+			return new BloodPressureReading(Integer.parseInt(systolic), 
+					Integer.parseInt(diastolic), date);		
+		else 
+			throw new InvalidVitalSignException();		
+	}
+	
+	/**
+	 * Returns whether the given string is valid.
+	 * @param s The String to be checked.
+	 * @return True iff s is valid, false otherwise.
+	 */
+	public static boolean isValid(String a, String b){
+		try{
+			Integer.parseInt(a);
+			Integer.parseInt(b);
+		}catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Returns the systolic pressure of this BloodPressureReading.
+	 * @return The systolic pressure of this BloodPressureReading.
+	 */
+	public int getSystolic(){
+		return this.systolic;
+	}
+	
+	/**
+	 * Returns the diastolic pressure of this BloodPressureReading.
+	 * @return The diastolic pressure of this BloodPressureReading.
+	 */
+	public int getDiastolic(){
+		return this.diastolic;
+	}
+	
+	@Override
+	public TimeStamp getReadingTime(){
+		return this.readingTime;
+	}
+	
+	@Override
+	public int calculateUrgencyPoint(){
+		if (this.systolic >= 140 || this.diastolic >= 90)
+			return 1;
+		else 
+			return 0;
+	}
+	
+	@Override
+	public int getUrgency() {
+		return this.urgency;
+	}
+
+	@Override
+	public int compareTo(BloodPressureReading another) {
+		TimeStamp otherTime = another.getReadingTime();
+		return this.readingTime.compareTo(otherTime);
+	}
+
+	/**
+	 * Returns the String representation of this BloodPressureReading in the
+	 * format of "yyyy-MM-dd HH:mm  Blood Pressure: systolic/diastolic".
+	 */
+	@Override
+	public String toString() {
+		String time = this.getReadingTime().toString();
+		String systolic = String.valueOf(this.getSystolic());
+		String diastolic = String.valueOf(this.getDiastolic());
+		return time + "  Blood Pressure: " + systolic + "/" + diastolic;
+	}
+	
+	public String getReadingAsString() {
+		return String.valueOf(this.systolic) + "/" + 
+				String.valueOf(this.diastolic);
+	}
+	
+}

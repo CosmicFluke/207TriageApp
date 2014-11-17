@@ -1,0 +1,121 @@
+package com.group0931.triagephase2;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+
+/**
+ * An activity that allows the user to add a new temperature reading to the
+ * most recent visit of the current patient.
+ * @author Christina Chung, Asher MindenWebb, Angel You.
+ *
+ */
+public class AddTemperatureActivity extends Activity {
+
+	/** The temperature of this reading. */
+	private EditText temperature;
+	/** The year of this reading. */
+	private EditText year;
+	/** The month of this reading. */
+	private EditText month;
+	/** The day of this reading. */
+	private EditText day;
+	/** The hour of this reading. */
+	private EditText hour;
+	/** The minute of this reading. */
+	private EditText minute;
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_add_temperature);
+		
+		temperature = (EditText) findViewById(R.id.temperature_reading);
+		year = (EditText) findViewById(R.id.temperature_reading_year);
+		month = (EditText) findViewById(R.id.temperature_reading_month);
+		day = (EditText) findViewById(R.id.temperature_reading_day);
+		hour = (EditText) findViewById(R.id.temperature_reading_hour);
+		minute = (EditText) findViewById(R.id.temperature_reading_minute);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.add_temperature, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle action bar item clicks here. The action bar will
+		// automatically handle clicks on the Home/Up button, so long
+		// as you specify a parent activity in AndroidManifest.xml.
+		int id = item.getItemId();
+		if (id == R.id.action_settings) {
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
+	/**
+	 * Adds a new temperature reading to the most recent visit of the current 
+	 * patient.
+	 * @param view The View form which the method is called.
+	 * @throws CurrentPatientNotSetException When there isn't a current patient 
+	 * to add a visit entry to. 
+	 * @throws VisitsNotLoadedException When the current patient doesn't have a 
+	 * most recent visit. 
+	 * @throws NoVisitsException 
+	 * @throws InvalidTimeStampException 
+	 */
+	public void addNewTemperature(View view) throws CurrentPatientNotSetException, 
+	VisitsNotLoadedException, NoVisitsException{
+		try {	
+			if (CurrentPatient.get().hasVisited()) {
+				TimeStamp readingTime = TimeStamp.FactoryTimeStampWithTime(
+						year.getText().toString(), month.getText().toString(), 
+						day.getText().toString(), hour.getText().toString(),
+						minute.getText().toString());
+				TemperatureReading newTemperature = 
+						TemperatureReading.FactoryTemperatureReading(
+								temperature.getText().toString(), readingTime);
+				if (CurrentPatient.get().hasVisited()){
+					CurrentPatient.get().getLastVisit().addTemperatureReading(newTemperature);
+				} else {
+					throw new InactivePatientException();
+				}
+				this.displayMessage("A new temperature reading of " + 
+				CurrentPatient.get().getLastVisit().getMostRecentTemperatureReading() + 
+					" for " + CurrentPatient.get().getName() + " has been entered.");
+			} else {
+				throw new InactivePatientException(); 
+			}
+		} catch (InvalidTimeStampException e) {
+			this.displayMessage("Unfortunately, the date you entered is invalid.");
+		} catch (InactivePatientException e){
+			this.displayMessage("Unfortunately " + CurrentPatient.get().getName() + 
+				" does not have an active visit to add vital sign readings to.");
+		} catch (InvalidVitalSignException e){
+			this.displayMessage("Unfortunately, you did not enter a valid temperature.");
+		} finally {
+			this.finish();
+		}
+		this.finish();
+		
+	}
+	
+	/**
+	 * Displays a message to the user by launching a {@code MessageDisplayActivity}.
+	 * @param message The message to be displayed.
+	 */
+	public void displayMessage(String message){
+		Intent i = new Intent(this, MessageDisplayActivity.class);
+		i.putExtra("DISPLAYMESSAGE", message);
+		this.startActivity(i);
+	}
+	
+}
